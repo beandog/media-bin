@@ -1,0 +1,44 @@
+#!/bin/bash -x
+
+function is_dvd {
+
+	device="$(realpath $1)"
+	test "$device" == "/dev/sr0" || return 1
+
+}
+
+function is_image {
+
+	device="$(realpath $1)"
+	test -d "$device" && return 1
+	test "${device: -3}" == "iso" || return 1
+
+}
+
+function is_directory {
+
+	device="$(realpath $1)"
+	test "${device: -3}" == "iso" || return 1
+	test -d "$device" || return 1
+
+}
+
+device="$1"
+test -z "$device" && device="/dev/sr0"
+test -e "$device" || return 1
+track="all"
+test -z "$2" || track="`expr $2 - 1`"
+output_dir="."
+if [[ "${device: -3}" == "iso" ]]; then output_dir="${device:: -3}mux"; if ! -d "$output_dir"; then mkdir "$output_dir"; fi; fi
+if [[ "${device: -4}" == "iso/" ]]; then output_dir="${device:: -4}mux"; if [[ ! -d "$output_dir" ]]; then mkdir "$output_dir"; fi; fi
+
+device="$(realpath $device)"
+
+makemkv_arg=
+is_dvd "$device" && makemkv_arg="dev:${device}"
+is_image "$device" && makemkv_arg="iso:${device}"
+is_directory "$device" && makemkv_arg="file:${device}/VIDEO_TS"
+
+test -z "$makemkv_arg" && exit 1
+
+makemkvcon --robot --minlength=0 info $makemkv_arg
