@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Print-out the minimum requirements for a HandBrake preset to format to this hardware device
+# Possible targets:
+# - PSP 1000 (psp)
+# - Sony Blu-ray player (sony_bluray_player)
+# - Samsung Gravity 2 (samsung_gravity_2)
+
+presets="psp sony_bluray gravity2 mp4 mkv sansa"
+
+if [[ "$1" == "psp" ]]; then
+	echo HandBrakeCLI --format av_mp4 --encoder x264 --encoder-profile main --encopts bframes=1 --encoder-preset medium --quality 20 --aencoder fdk_aac --mixdown stereo --maxWidth 480 --maxHeight 272 --subtitle none
+elif [[ "$1" == "sony_bluray_player" ]]; then
+	echo HandBrakeCLI --format av_mkv --markers --encoder-profile high --quality 20 --aencoder fdk_aac
+elif [[ "$1" == "gravity2" ]]; then
+	echo HandBrakeCLI --format av_mp4 --encoder x264 --encoder-profile baseline --encoder-preset medium --rate 15 --quality 20 --aencoder fdk_aac --mixdown stereo --maxWidth 176 --maxHeight 144 --subtitle none
+elif [[ "$1" == "mp4" ]]; then
+	echo HandBrakeCLI --format av_mp4 --markers --encoder x264 --encoder-preset medium --encoder-profile high --quality 20 --aencoder fdk_aac --native-language eng --subtitle 1
+elif [[ "$1" == "mkv" ]]; then
+	echo HandBrakeCLI --format av_mkv --markers --encoder x264 --encoder-preset medium --encoder-profile high --quality 20 --aencoder fdk_aac --native-language eng --subtitle 1
+elif [[ "$1" == "sansa" ]]; then
+	echo HandBrakeCLI --format av_mkv --encoder mpeg2 --quality 20 --aencoder mp3 --maxWidth 224 --maxHeight 176 --no-markers
+fi
