@@ -1,0 +1,3 @@
+#!/bin/bash
+m2ts=`basename "$1" .mkv`.m2ts
+avconv -y -i "$1" -f mpegts -bsf:v h264_mp4toannexb -vcodec copy -acodec copy "$m2ts"
