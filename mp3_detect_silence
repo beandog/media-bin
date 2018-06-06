@@ -1,0 +1,7 @@
+#!/bin/bash
+if [[ -z "$1" ]]; then exit 1; fi
+basename=`basename "$1" .mkv`
+avconv -y -i "$1" "${basename}.wav"
+lame -b 192 --cbr -V 0 "${basename}.wav"
+rm "${basename}"_silence*.mp3 mp3splt.log
+mp3splt "${basename}.mp3" -s -p min=1

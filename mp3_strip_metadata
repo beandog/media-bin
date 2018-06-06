@@ -1,0 +1,22 @@
+#!/usr/bin/php
+<?php
+
+	function strip_metadata($mp3_filename) {
+
+		$arg_source = escapeshellarg($this->source);
+
+		$tmpfile = tempnam("/tmp", "encode_").".mp3";
+
+		$cmd = "avconv -y -i $arg_source -vn -acodec copy -write_xing 0 -id3v2_version 0 -map_metadata -1 $tmpfile &> /dev/null";
+		echo $cmd;
+
+		exec($cmd, $arr, $retval);
+			
+		if($retval)
+			return false;
+
+		$bool = rename($tmpfile, $this->source);
+
+		return $bool;
+	}
+
