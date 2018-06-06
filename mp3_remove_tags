@@ -2,7 +2,7 @@
 
 function display_usage {
 
-	echo mp3_set_title \"Track / Song Title\" music.mp3  
+	echo mp3_remove_tags music.mp3  
 	exit 1
 
 }
@@ -15,4 +15,4 @@ function is_mp3 {
 
 test $# -gt 1 || display_usage
 
-id3v2 --year "$1" "${@:2}"
+id3v2 --delete-all "${@:1}"
