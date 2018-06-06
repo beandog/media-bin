@@ -1,0 +1,4 @@
+#!/bin/bash
+test $# -eq 1 || return 1
+test ! -z "$1" || return 1
+for x in 02 04 06 08 10 12 14 16 18 20 22 24 26 28; do avconv -i "$1" -ss $x -an -an -frames 1 $x.$1.png; done
