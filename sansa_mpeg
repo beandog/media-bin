@@ -1,0 +1,33 @@
+#!/bin/bash
+
+control_c() {
+        exit 1
+}
+trap control_c INT
+
+display_usage() {
+	echo "Usage: `basename $0` input.mp4"
+}
+
+if [[ $# -lt 1 ]]; then display_usage; exit 1; fi
+
+vcodec=mpeg2video
+acodec=mp3
+width=220
+height=176
+video_bitrate=256k
+audio_bitrate=64k
+
+for input in $*; do
+	if [[ ! -e "$input" ]]; then echo "Could not find $input"; continue; fi
+
+	# extension="${input: -3}"
+	# episode="`episode_query -v ${input}`"
+	output="`echo $input | sed -e s/${input: -3}/mpg/g`"
+
+	if [[ -e "$output" ]]; then continue; fi
+
+	echo "* $input - $output"
+
+	avconv -y -i "$input" -vcodec $vcodec -s ${width}x${height} -vb $video_bitrate -acodec $acodec -ab $audio_bitrate "$output"
+done
