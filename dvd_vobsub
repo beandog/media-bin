@@ -1,0 +1,3 @@
+#!/bin/bash
+bn=$(basename "$1" .vob)
+mencoder "$1" -ovc copy -oac copy -vobsubout "$bn" -vobsuboutindex 0 -sid 0 -o /dev/null
