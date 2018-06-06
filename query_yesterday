@@ -1,0 +1,6 @@
+#!/bin/bash
+sqlite3 ~/plex.sqlite.db "SELECT media_parts.file FROM media_items JOIN metadata_items ON media_items.metadata_item_id = metadata_items.id JOIN media_parts ON media_parts.media_item_id = media_items.id WHERE metadata_items.library_section_id IN(15,16)
+	AND originally_available_at IS NOT NULL
+	AND STRFTIME('%m', originally_available_at) = STRFTIME('%m', 'now', '-1 day', 'localtime')
+	AND STRFTIME('%d', originally_available_at) = STRFTIME('%d', 'now', '-1 day', 'localtime')
+	ORDER BY media_parts.file;"
