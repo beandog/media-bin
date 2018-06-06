@@ -1,0 +1,5 @@
+#!/bin/bash
+export VIDEO_FORMAT=NTSC
+dvdauthor -o dvd_author/ -t $*
+dvdauthor -o dvd_author/ -T
+mkisofs -o DVD_AUTHOR.iso -dvd-video -V DVD_AUTHOR dvd_author/
