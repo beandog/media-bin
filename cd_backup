@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# See https://hydrogenaud.io/index.php/topic,28945.0.html for inspiration
+
+disc_id="$(cd-discid | cut -d ' ' -f 1)"
+if [[ -z "$disc_id" ]]; then echo "Could not grab Disc ID"; exit 1; fi
+
+# Rip WAV files in format trackXX.cdda.wav
+if [[ ! -e "track01.cdda.wav" ]]; then
+	cdparanoia -v -B
+fi
+
+# Extract TOC file
+if [[ ! -e "${disc_id}.toc" ]]; then
+	cdrdao read-toc --device /dev/sr0 --with-cddb ${disc_id}.toc
+fi
