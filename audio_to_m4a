@@ -1,0 +1,33 @@
+#!/bin/bash
+input="$1"
+realpath=`realpath "$1"`
+dirname=`dirname "$realpath"`
+basename=`basename "$1" .${1: -3}`
+input="${realpath}"
+output="${dirname}/${basename}.m4a"
+
+if [[ -e "$output" ]]; then exit; fi
+echo "* `basename \"$input\"` -> `basename \"$output\"`" 
+
+avconv -y -i "$input" -vn "$output" &> /dev/null
+
+artist=$(mediainfo "$input" | grep "^Performer" | cut -d ':' -f 2- | sed -e 's/^ //g')
+album=$(mediainfo "$input" | grep "^Album" | cut -d ':' -f 2- | sed -e 's/^ //g')
+track=$(mediainfo "$input" | grep "^Track name " | cut -d ':' -f 2- | sed -e 's/^ //g')
+tracknum=$(mediainfo "$input" | grep "^Track name/Position" | awk '{print $4}')
+genre=$(mediainfo "$input" | grep "^Genre" | cut -d ':' -f 2- | sed -e 's/^ //g')
+
+id3v2 --delete-all "$output" &> /dev/null
+
+if [[ ! -z "$artist" ]]; then
+	id3v2 --artist "$artist" "$output" &> /dev/null
+fi
+if [[ ! -z "$album" ]]; then
+	id3v2 --album "$album" "$output" &> /dev/null
+fi
+if [[ ! -z "$track" ]]; then
+	id3v2 --song "$track" "$output" &> /dev/null
+fi
+if [[ ! -z "$tracknum" ]]; then
+	id3v2 --track "$tracknum" "$output" &> /dev/null
+fi
