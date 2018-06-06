@@ -1,0 +1,8 @@
+#!/bin/bash
+for video in $*; do
+	echo -n "$video "
+	mediainfo "$video" 2> /dev/null | egrep "^Format\s{2}+" | awk '{print $3}' | while read line; do
+		echo -n "$line "
+	done
+	echo
+done
