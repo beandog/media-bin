@@ -1,0 +1,28 @@
+#!/bin/bash
+
+function display_usage {
+	echo "Usage: encode [input] [output] [animation|film] [detelecine: yes|no]"
+	exit
+}
+
+test $# -eq 4 || display_usage
+test -z "$1" && display_usage
+test -z "$2" && display_usage
+test -z "$3" && display_usage
+test -z "$4" && display_usage
+
+valid_tune=no
+test "$3" == "animation" && valid_tune=yes
+test "$3" == "film" && valid_tune=yes
+test "$valid_tune" == yes || display_usage
+
+valid_detelecine=no
+test "$4" == "yes" && valid_tune=yes
+test "$4" == "no" && valid_tune=no
+test "$valid_tune" == yes || display_usage
+filters=
+test "$4" == "yes" && filters="--detelecine"
+
+test -e "$1" || display_usage
+
+HandBrakeCLI '--markers' $filters '--optimize' --encoder 'x264' --quality '23' --encoder-profile 'high' --encoder-level '4.1' --encoder-preset 'medium' --encoder-tune ${3} --aencoder 'fdk_aac' -i "${1}" -o "${2}"
