@@ -1,0 +1,6 @@
+#!/bin/bash
+m4a=`realpath "$*"`
+basename=`basename "$m4a" .m4a`
+mp3="$basename.mp3"
+avconv -y -i "$m4a" -map_metadata 0 -id3v2_version 3 -vn -b 320k "$mp3"
+id3v2 --remove-frame TXXX "$mp3"

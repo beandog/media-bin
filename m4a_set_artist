@@ -1,0 +1,25 @@
+#!/bin/bash
+
+function display_usage {
+
+	echo aac_set_artist \"Track Artist\" music.aac  
+	exit 1
+
+}
+
+function is_aac {
+
+	test "${1: -3}" == "aac"
+
+}
+
+function is_m4a {
+
+	test "${1: -3}" == "m4a"
+
+}
+
+test $# -gt 1 || display_usage
+
+MP4Box -tmp /tmp "$2" -itags artist="$1"
+# MP4Box -itags album_artist="$1" "$2"
