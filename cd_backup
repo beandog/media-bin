@@ -1,9 +1,18 @@
 #!/bin/bash
 
+# cd_backup - back up a CD for archiving - http://dvds.beandog.org/doku.php?id=cd_backup
+
+# Requirements:
+# * app-cdr/cdrdao - http://cdrdao.sourceforge.net/
+# * app-cdr/cuetools - https://github.com/svend/cuetools
+# * dev-libs/libcdio-paranoia - https://www.gnu.org/software/libcdio/
+# * media-sound/cd-discid - https://github.com/taem/cd-discid
+
+# See https://hydrogenaud.io/index.php/topic,28945.0.html for inspiration
+
 device="/dev/cdrom"
 test -z "$1" || device="$1"
 
-# See https://hydrogenaud.io/index.php/topic,28945.0.html for inspiration
 
 # Get the CDDB (cd-discid package)
 disc_id="$(cd-discid $device | cut -d ' ' -f 1)"
