@@ -1,16 +1,28 @@
 #!/bin/bash
 
+device="/dev/cdrom"
+test -z "$1" || device="$1"
+
 # See https://hydrogenaud.io/index.php/topic,28945.0.html for inspiration
 
-disc_id="$(cd-discid | cut -d ' ' -f 1)"
-if [[ -z "$disc_id" ]]; then echo "Could not grab Disc ID"; exit 1; fi
-
-# Rip WAV files in format trackXX.cdda.wav
-if [[ ! -e "track01.cdda.wav" ]]; then
-	cdparanoia -v -B
+# Get the CDDB (cd-discid package)
+disc_id="$(cd-discid $device | cut -d ' ' -f 1)"
+if [[ -z "$disc_id" ]]; then
+	echo "Could not grab Disc ID"
+	exit 1
 fi
 
-# Extract TOC file
+# Rip CD to one WAV file (libcdio-paranoia package)
+if [[ ! -e "${disc_id}.wav" ]]; then
+	cdparanoia -d $device 1- ${disc_id}.wav
+fi
+
+# Extract TOC file (cdrao package)
 if [[ ! -e "${disc_id}.toc" ]]; then
-	cdrdao read-toc --device /dev/sr0 --with-cddb ${disc_id}.toc
+	yes 1 | cdrdao read-toc --device $device --with-cddb ${disc_id}.toc
+fi
+
+# Create CUE file to TOC for added encode options (cuetools package)
+if [[ ! -e "${disc_id}.cue" ]]; then
+	cueconvert -i toc -o cue ${disc_id}.toc ${disc_id}.cue
 fi
