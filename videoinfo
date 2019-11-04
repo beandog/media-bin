@@ -17,22 +17,23 @@ for video in $*; do
 	fi
 
 	# Find out if it's progressive or not
+	frame_rate_mode=`echo "$mediainfo_out" | egrep "^Frame rate mode" | head -n 1 | awk '{print $NF}'`
 	progressive=0
-	fps=0
-	frame_rate_mode=`echo "$mediainfo_out" | egrep "^Frame rate mode" | head -n 1 | awk '{print $5}'`
 	if [[ "$frame_rate_mode" == "Constant" ]]; then
 		progressive=1
 	fi
+	fps=0
 	if [[ "$progressive" -eq 1 ]]; then
 		fps=`echo "$mediainfo_out" | egrep "^Frame rate\s{2}+" | head -n 1 | awk '{print $4}' | cut -d '.' -f 1`
 	fi
-	if [[ "$get_height" == 1 ]] && [[ "$progressive" == 1 ]] && [[ "$fps" -ge 30 ]]; then
-		display="${height}p${fps}"
+	display=""
+	if [[ "$get_height" == 1 ]] && [[ "$progressive" == 1 ]] && [[ "$fps" -gt 0 ]]; then
+		display="${height}p${fps} "
 	fi
 
 	# Print all the formats
 	echo -n "$video "
-	echo -n "$display "
+	echo -n "$display"
 	echo "$mediainfo_out" | egrep "^Format\s{2}+" | awk '{print $3}' | while read line; do
 		echo -n "$line "
 	done
