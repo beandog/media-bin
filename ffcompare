@@ -1,0 +1,40 @@
+#!/bin/sh
+#
+# Shortcut: ffplay -f lavfi "movie=video1.mkv[a];movie=video2.mkv[b];[a][b]hstack"
+#   __  __
+#  / _|/ _| ___ ___  _ __ ___  _ __   __ _ _ __ ___
+# | |_| |_ / __/ _ \| '_ ` _ \| '_ \ / _` | '__/ _ \
+# |  _|  _| (_| (_) | | | | | | |_) | (_| | | |  __/
+# |_| |_|  \___\___/|_| |_| |_| .__/ \__,_|_|  \___|
+#                             |_|
+#
+# Compare two videos horizontally
+#
+# * https://wonkabar.org/beandogs-media-bin-ffcompare-mpvcompare/
+# * https://github.com/beandog/media-bin
+# * https://ffmpeg.org/ffmpeg-devices.html#lavfi
+#
+# Notes:
+# * Height must be equal between two videos (since playing horizontally)
+# * Disables audio playback (ostensibly to compare video quality only)
+# * Disables subtitles
+# * Hides ffmpeg compile info
+
+# Check for ffmpeg
+which ffmpeg &> /dev/null
+if [[ $? -ne 0 ]]; then echo "Missing ffmpeg"; exit 1; fi
+
+# Check syntax
+if [[ $# -ne 2 ]]; then echo "Syntax: `basename $0` [video 1] [video 2]"; exit 1; fi
+
+# Check for files
+if [[ ! -e "$1" ]]; then echo "$1 file does not exist"; exit 1; fi;
+if [[ ! -e "$2" ]]; then echo "$2 file does not exist"; exit 1; fi;
+
+# rock and roll :D
+ffplay \
+	-hide_banner \
+	-an \
+	-sn \
+	-f lavfi \
+	"movie='${1}'[a];movie='${2}'[b];[a][b]hstack"
